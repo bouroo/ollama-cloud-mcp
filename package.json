@@ -21,9 +21,6 @@
     "README.md",
     "LICENSE"
   ],
-  "engines": {
-    "node": ">=20"
-  },
   "keywords": [
     "mcp",
     "modelcontextprotocol",

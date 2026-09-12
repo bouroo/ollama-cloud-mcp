@@ -16,7 +16,8 @@ Both are authenticated with a bearer token from a free Ollama account.
 
 ## Requirements
 
-- Node.js **20 or newer**
+- Node.js — the current Active LTS. CI tracks `lts/*`, and no `engines` floor is
+  declared, so no version is claimed that CI does not actually test.
 - A free Ollama account and an API key from <https://ollama.com/settings/keys>
 
 ## Setup
@@ -216,7 +217,7 @@ To re-run a failed publish without cutting a new release, use
 ## Continuous integration
 
 `.github/workflows/ci.yml` runs on every push to `main` and every pull request,
-across Node 20, 22 and 24:
+on the current Active LTS (`lts/*`):
 
 - type-check, test, build
 - drive a **full MCP handshake against a copy of the built bundle sitting alone in
