@@ -161,7 +161,18 @@ One-time setup:
 
 1. Create a **granular access token** on npm with read-write access to the
    `@bouroo` scope.
-2. Add it to the repository as a secret named `NPM_TOKEN`
+2. **Enable "Bypass 2FA" on that token.** npm refuses any publish that is not
+   backed by 2FA or by a granular token with bypass-2FA enabled, failing with:
+
+   ```
+   403 ... Two-factor authentication or granular access token with bypass 2fa
+   enabled is required to publish packages.
+   ```
+
+   A plain `npm login` session token cannot publish, and a CI token created
+   without this toggle fails identically — so this is the one setting that
+   actually makes publishing work.
+3. Add it to the repository as a secret named `NPM_TOKEN`
    (Settings → Secrets and variables → Actions).
 
 Then, for each release:
