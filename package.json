@@ -1,20 +1,20 @@
 {
-  "name": "@bouroo/ollama-web-mcp",
+  "name": "@bouroo/ollama-cloud-mcp",
   "version": "0.1.0",
   "description": "MCP server exposing Ollama's web_search and web_fetch capabilities over stdio.",
   "license": "MIT",
   "author": "Kawin Viriyaprasopsook <bouroo@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bouroo/ollama-web-mcp.git"
+    "url": "git+https://github.com/bouroo/ollama-cloud-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/bouroo/ollama-web-mcp/issues"
+    "url": "https://github.com/bouroo/ollama-cloud-mcp/issues"
   },
-  "homepage": "https://github.com/bouroo/ollama-web-mcp#readme",
+  "homepage": "https://github.com/bouroo/ollama-cloud-mcp#readme",
   "type": "module",
   "bin": {
-    "ollama-web-mcp": "dist/index.js"
+    "ollama-cloud-mcp": "dist/index.js"
   },
   "files": [
     "dist",

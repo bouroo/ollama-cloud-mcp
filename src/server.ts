@@ -11,7 +11,7 @@ import {
   type WebSearchResponse,
 } from "./ollama.js";
 
-export const SERVER_NAME = "ollama-web-mcp";
+export const SERVER_NAME = "ollama-cloud-mcp";
 
 export function createServer(client: OllamaWebClient, version: string): McpServer {
   const server = new McpServer({ name: SERVER_NAME, version });

@@ -7,14 +7,14 @@ import pkg from "../package.json" with { type: "json" };
 
 const SERVER_VERSION: string = pkg.version;
 
-const HELP = `ollama-web-mcp v${SERVER_VERSION}
+const HELP = `${SERVER_NAME} v${SERVER_VERSION}
 
 MCP server exposing Ollama's web search and web fetch capabilities over stdio.
 
 USAGE
-  ollama-web-mcp            Start the stdio MCP server.
-  ollama-web-mcp --help     Show this help.
-  ollama-web-mcp --version  Print the version.
+  ollama-cloud-mcp            Start the stdio MCP server.
+  ollama-cloud-mcp --help     Show this help.
+  ollama-cloud-mcp --version  Print the version.
 
 ENVIRONMENT
   OLLAMA_API_KEY  Bearer token for https://ollama.com. Required for the hosted API.
@@ -26,7 +26,7 @@ ENVIRONMENT
 MCP CLIENT CONFIG
   {
     "mcpServers": {
-      "ollama-web": {
+      "ollama-cloud": {
         "command": "npx",
         "args": ["-y", "${pkg.name}"],
         "env": { "OLLAMA_API_KEY": "<your key>" }

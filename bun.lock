@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "@bouroo/ollama-web-mcp",
+      "name": "@bouroo/ollama-cloud-mcp",
       "devDependencies": {
         "@modelcontextprotocol/sdk": "^1.30.0",
         "@types/bun": "^1.4.2",

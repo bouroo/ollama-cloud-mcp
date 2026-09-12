@@ -1,6 +1,6 @@
-# @bouroo/ollama-web-mcp
+# @bouroo/ollama-cloud-mcp
 
-[![CI](https://github.com/bouroo/ollama-web-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/bouroo/ollama-web-mcp/actions/workflows/ci.yml)
+[![CI](https://github.com/bouroo/ollama-cloud-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/bouroo/ollama-cloud-mcp/actions/workflows/ci.yml)
 
 An MCP server that exposes [Ollama's web search and web fetch](https://docs.ollama.com/capabilities/web-search)
 capabilities as two tools, `web_search` and `web_fetch`, over stdio.
@@ -27,7 +27,7 @@ your MCP client.
 **Claude Code**
 
 ```bash
-claude mcp add ollama-web --env OLLAMA_API_KEY=your-key-here -- npx -y @bouroo/ollama-web-mcp
+claude mcp add ollama-cloud --env OLLAMA_API_KEY=your-key-here -- npx -y @bouroo/ollama-cloud-mcp
 ```
 
 **Claude Desktop / other clients** — add to `claude_desktop_config.json` or the
@@ -36,9 +36,9 @@ equivalent `mcpServers` block:
 ```json
 {
   "mcpServers": {
-    "ollama-web": {
+    "ollama-cloud": {
       "command": "npx",
-      "args": ["-y", "@bouroo/ollama-web-mcp"],
+      "args": ["-y", "@bouroo/ollama-cloud-mcp"],
       "env": { "OLLAMA_API_KEY": "your-key-here" }
     }
   }
