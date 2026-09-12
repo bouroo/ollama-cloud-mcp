@@ -207,9 +207,15 @@ To re-run a failed publish without cutting a new release, use
   fails with a clear message if the version is still too low.
 - The publisher is matched on **repository plus workflow filename**, so renaming or
   moving `release.yml` silently breaks publishing.
-- Failures surface as a **404 that claims the package does not exist**, even when the
-  real cause is a mismatched trusted-publisher configuration. A 404 on publish means
-  "check the trusted publisher settings", not "the package is gone".
+- A publish rejected by npm reports one of two errors, and both point at the trust
+  configuration rather than at your code. The tell that the OIDC path itself worked
+  is the line just above the error:
+  `publish Provenance statement published to transparency log: ...`.
+  - **`403 ... OIDC permission denied for this action`** — the OIDC token was minted
+    and accepted, but no trusted-publisher relationship matches this repository and
+    workflow filename. Re-check both on the package's settings page.
+  - **`404`** — the package does not exist on npm yet, so there is nothing to attach
+    a publisher to. See the one-time setup above.
 - `prepack` runs the typecheck, tests and build, so a tarball always carries fresh
   output. The package is a bundle: `dependencies` is empty and consumers install
   nothing.
