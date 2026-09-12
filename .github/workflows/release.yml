@@ -8,7 +8,8 @@ on:
 
 permissions:
   contents: read
-  # Required to mint the OIDC token that backs the provenance attestation.
+  # Mints the OIDC token that npm exchanges for short-lived publish credentials.
+  # This is what replaces a long-lived NPM_TOKEN secret.
   id-token: write
 
 concurrency:
@@ -27,11 +28,26 @@ jobs:
         with:
           bun-version: latest
 
-      # registry-url must be set explicitly for NODE_AUTH_TOKEN to be picked up.
+      # Node 22.14+ is the documented floor for trusted publishing. registry-url
+      # is still set explicitly so npm targets the public registry.
       - uses: actions/setup-node@v7
         with:
-          node-version: "22"
+          node-version: "24"
           registry-url: https://registry.npmjs.org/
+
+      # The npm bundled with setup-node is usually older than trusted publishing
+      # requires, so upgrade it and fail loudly if it is still too old — an old
+      # npm shows up as a confusing 404 on publish rather than a clear error.
+      - name: Ensure npm supports trusted publishing
+        run: |
+          npm install -g npm@latest
+          REQUIRED=11.5.1
+          ACTUAL="$(npm --version)"
+          if [ "$(printf '%s\n%s\n' "$REQUIRED" "$ACTUAL" | sort -V | head -n1)" != "$REQUIRED" ]; then
+            echo "::error::npm $ACTUAL is older than $REQUIRED, which trusted publishing requires"
+            exit 1
+          fi
+          echo "npm $ACTUAL supports trusted publishing"
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -63,7 +79,7 @@ jobs:
       - name: Type-check, test and build
         run: bun run typecheck && bun run test && bun run build
 
-      - name: Publish with provenance
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # No NODE_AUTH_TOKEN: npm exchanges this job's OIDC token for short-lived
+      # publish credentials and attaches a provenance attestation automatically.
+      - name: Publish via trusted publishing
+        run: npm publish --access public

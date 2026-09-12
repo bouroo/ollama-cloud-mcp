@@ -154,28 +154,37 @@ scripts/smoke.mjs  end-to-end stdio smoke test
 
 ## Releasing
 
-npm publishing is driven by GitHub Releases, so shipping is an explicit, reviewed
-action rather than a side effect of a push.
+npm publishing uses [trusted publishing](https://docs.npmjs.com/trusted-publishers)
+(OIDC): GitHub mints a short-lived identity token for the run, npm exchanges it for
+publish credentials, and a provenance attestation is attached automatically. No
+long-lived npm token is stored in this repository.
 
-One-time setup:
+### One-time setup
 
-1. Create a **granular access token** on npm with read-write access to the
-   `@bouroo` scope.
-2. **Enable "Bypass 2FA" on that token.** npm refuses any publish that is not
-   backed by 2FA or by a granular token with bypass-2FA enabled, failing with:
+Trusted publishing **cannot publish the first version of a package** — npm requires
+the package to exist before a trusted publisher can be configured
+([npm/cli#8544](https://github.com/npm/cli/issues/8544), still open as of August 2026).
+Bootstrap once, then never again:
+
+1. Publish `0.1.0` by any one-off method:
+   - enable 2FA on the npm account and run `npm publish --otp=<code>` locally, or
+   - mint a short-lived granular token (read-write on `@bouroo`) and publish with it.
+
+   npm rejects a publish backed by neither 2FA nor a bypass-2FA granular token:
 
    ```
-   403 ... Two-factor authentication or granular access token with bypass 2fa
+   403 Two-factor authentication or granular access token with bypass 2fa
    enabled is required to publish packages.
    ```
 
-   A plain `npm login` session token cannot publish, and a CI token created
-   without this toggle fails identically — so this is the one setting that
-   actually makes publishing work.
-3. Add it to the repository as a secret named `NPM_TOKEN`
-   (Settings → Secrets and variables → Actions).
+2. Configure the trusted publisher at **npmjs.com → the package → Settings →
+   Trusted Publisher → GitHub Actions**:
+   - Repository: `bouroo/ollama-cloud-mcp`
+   - Workflow filename: `release.yml` — filename only, including the extension
+   - Environment: leave blank, the workflow uses none
+3. Every release after that publishes with no secret at all.
 
-Then, for each release:
+### Cutting a release
 
 ```bash
 npm version patch        # or minor / major — bumps package.json and tags the commit
@@ -183,18 +192,26 @@ git push --follow-tags
 gh release create v0.1.1 --generate-notes
 ```
 
-Publishing the release triggers `.github/workflows/release.yml`, which refuses to
-proceed unless the release tag matches `package.json` and that version is not
-already on npm, re-runs the gates, and then publishes with a
-[provenance attestation](https://docs.npmjs.com/generating-provenance-statements)
-cryptographically linking the tarball to the commit and workflow that built it.
+`.github/workflows/release.yml` refuses to proceed unless the tag matches
+`package.json` and that version is not already on npm, re-runs the gates, and then
+publishes over OIDC.
 
 To re-run a failed publish without cutting a new release, use
 **Actions → Release → Run workflow**.
 
-`prepack` also runs the typecheck, tests and build, so a tarball always carries
-fresh output. The package is a bundle: `dependencies` is empty and consumers
-install nothing.
+### Gotchas
+
+- **npm CLI 11.5.1+ and Node 22.14.0+** are required. The npm bundled with
+  `setup-node` is often older, so the workflow runs `npm install -g npm@latest` and
+  fails with a clear message if the version is still too low.
+- The publisher is matched on **repository plus workflow filename**, so renaming or
+  moving `release.yml` silently breaks publishing.
+- Failures surface as a **404 that claims the package does not exist**, even when the
+  real cause is a mismatched trusted-publisher configuration. A 404 on publish means
+  "check the trusted publisher settings", not "the package is gone".
+- `prepack` runs the typecheck, tests and build, so a tarball always carries fresh
+  output. The package is a bundle: `dependencies` is empty and consumers install
+  nothing.
 
 ## Continuous integration
 
