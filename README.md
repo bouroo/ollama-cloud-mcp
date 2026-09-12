@@ -162,9 +162,13 @@ long-lived npm token is stored in this repository.
 
 ### One-time setup
 
-Trusted publishing **cannot publish the first version of a package** — npm requires
-the package to exist before a trusted publisher can be configured
+Trusted publishing **cannot publish the first version of a package**
 ([npm/cli#8544](https://github.com/npm/cli/issues/8544), still open as of August 2026).
+Configuring the publisher *is* allowed for a package that does not exist yet —
+`npm trust github` accepts it — so the blocker is the publish, not the setup. Staging is
+also closed here: `npm stage publish` refuses a package the registry has never seen
+(`404 Package ... not found`), because staging needs something to stage against.
+
 Bootstrap once, then never again:
 
 1. Publish `0.1.0` by any one-off method:
