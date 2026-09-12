@@ -195,10 +195,26 @@ gh release create v0.1.1 --generate-notes
 
 `.github/workflows/release.yml` refuses to proceed unless the tag matches
 `package.json` and that version is not already on npm, re-runs the gates, and then
-publishes over OIDC.
+stages the publish over OIDC.
 
-To re-run a failed publish without cutting a new release, use
+To re-run a failed stage without cutting a new release, use
 **Actions → Release → Run workflow**.
+
+### Approving a staged publish
+
+The trusted publisher grants **stage-publish only**, so the workflow uploads into
+npm's staging area rather than publishing directly. Staged publishing defers the
+proof-of-presence (2FA) check to the approval step, which is what lets CI run
+without a maintainer present. A human finishes it:
+
+```bash
+npm stage list            # find the stage id
+npm stage approve <id>    # publishes it (2FA required)
+npm stage reject <id>     # discards it
+```
+
+Nothing moves the `latest` tag until that approval, so a staged release can be
+inspected — or discarded — before it reaches anyone.
 
 ### Gotchas
 

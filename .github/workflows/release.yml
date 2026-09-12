@@ -81,5 +81,23 @@ jobs:
 
       # No NODE_AUTH_TOKEN: npm exchanges this job's OIDC token for short-lived
       # publish credentials and attaches a provenance attestation automatically.
-      - name: Publish via trusted publishing
-        run: npm publish --access public
+      # The trusted publisher grants stage-publish only, so this uploads into npm's
+      # staging area; nothing moves "latest" until a maintainer approves it with
+      # 2FA, which is what defers proof-of-presence out of CI.
+      - name: Stage the publish over OIDC
+        run: npm stage publish --access public
+
+      # Surface the stage id: approving it is the manual half of this flow, and
+      # hunting it out of the log is the obvious papercut.
+      - name: Report what is staged
+        if: always()
+        run: |
+          {
+            echo "### Staged for approval"
+            echo ""
+            echo "Approve with \`npm stage approve <id>\` (requires 2FA), or reject with \`npm stage reject <id>\`."
+            echo ""
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          npm stage list >> "$GITHUB_STEP_SUMMARY" 2>&1 || echo "(npm stage list unavailable in CI)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
