@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "MCP server exposing Ollama's web_search and web_fetch capabilities over stdio.",
   "license": "MIT",
-  "author": "Kawin Viriyaprasopsook <bouroo@gmail.com>",
+  "author": "Kawin Viriyaprasopsook <kawin.v@kkumail.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bouroo/ollama-cloud-mcp.git"
