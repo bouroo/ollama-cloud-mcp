@@ -1,0 +1,51 @@
+{
+  "name": "@bouroo/ollama-web-mcp",
+  "version": "0.1.0",
+  "description": "MCP server exposing Ollama's web_search and web_fetch capabilities over stdio.",
+  "license": "MIT",
+  "author": "Kawin Viriyaprasopsook <bouroo@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bouroo/ollama-web-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bouroo/ollama-web-mcp/issues"
+  },
+  "homepage": "https://github.com/bouroo/ollama-web-mcp#readme",
+  "type": "module",
+  "bin": {
+    "ollama-web-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "mcp",
+    "modelcontextprotocol",
+    "ollama",
+    "web-search",
+    "web-fetch"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "bun build src/index.ts --target=node --outdir=dist --format=esm",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "smoke": "node scripts/smoke.mjs",
+    "prepack": "bun run typecheck && bun run test && bun run build"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@types/bun": "^1.4.2",
+    "@types/node": "^22.20.2",
+    "typescript": "^7.0.2",
+    "zod": "^4.6.2"
+  }
+}
