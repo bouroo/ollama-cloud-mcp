@@ -1,5 +1,5 @@
-import type { FetchLike, OllamaConfig } from "../src/ollama.js";
-import { DEFAULT_BASE_URL } from "../src/ollama.js";
+import type { FetchLike } from "../src/adapters/OllamaWebClient.js";
+import { DEFAULT_BASE_URL, type OllamaConfig } from "../src/domain/config.js";
 
 export type RecordedCall = { url: string; init: RequestInit };
 

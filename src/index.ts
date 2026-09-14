@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
-import { OllamaWebClient, resolveConfig } from "./ollama.js";
-import { SERVER_NAME, createServer } from "./server.js";
+import { OllamaWebClient } from "./adapters/OllamaWebClient.js";
+import { SERVER_NAME, createServer } from "./adapters/McpServer.js";
+import { resolveConfig } from "./domain/config.js";
 import pkg from "../package.json" with { type: "json" };
 
 const SERVER_VERSION: string = pkg.version;

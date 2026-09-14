@@ -2,9 +2,10 @@ import { describe, expect, test } from "bun:test";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 
-import { DEFAULT_BASE_URL, OllamaWebClient, type OllamaConfig } from "../src/ollama.js";
-import { createServer } from "../src/server.js";
-import { CLOUD_CONFIG, jsonResponse, recordingFetch, type Recorder } from "./helpers.js";
+import { OllamaWebClient } from "../../src/adapters/OllamaWebClient.js";
+import { createServer } from "../../src/adapters/McpServer.js";
+import { DEFAULT_BASE_URL, type OllamaConfig } from "../../src/domain/config.js";
+import { CLOUD_CONFIG, jsonResponse, recordingFetch, type Recorder } from "../helpers.js";
 
 const NO_KEY_CONFIG: OllamaConfig = { baseUrl: DEFAULT_BASE_URL, customHost: false };
 

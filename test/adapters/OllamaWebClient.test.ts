@@ -1,16 +1,9 @@
 import { describe, expect, test } from "bun:test";
 
-import {
-  DEFAULT_BASE_URL,
-  DEFAULT_MAX_RESULTS,
-  MISSING_API_KEY_MESSAGE,
-  OllamaWebClient,
-  type OllamaConfig,
-  clampMaxResults,
-  normalizeBaseUrl,
-  normalizeTargetUrl,
-  resolveConfig,
-} from "../src/ollama.js";
+import { OllamaWebClient } from "../../src/adapters/OllamaWebClient.js";
+import { DEFAULT_BASE_URL, type OllamaConfig } from "../../src/domain/config.js";
+import { MISSING_API_KEY_MESSAGE } from "../../src/domain/errors.js";
+import { DEFAULT_MAX_RESULTS } from "../../src/domain/web.js";
 import {
   CLOUD_CONFIG,
   bodyOf,
@@ -18,90 +11,12 @@ import {
   jsonResponse,
   recordingFetch,
   textResponse,
-} from "./helpers.js";
+} from "../helpers.js";
 
 const LOCAL_CONFIG: OllamaConfig = {
   baseUrl: "http://127.0.0.1:11434",
   customHost: true,
 };
-
-describe("normalizeBaseUrl", () => {
-  test("keeps a value that already carries a scheme", () => {
-    expect(normalizeBaseUrl("https://ollama.com")).toBe("https://ollama.com");
-    expect(normalizeBaseUrl("http://localhost:11434")).toBe("http://localhost:11434");
-  });
-
-  test("adds http:// to a bare host:port, matching Ollama's OLLAMA_HOST convention", () => {
-    expect(normalizeBaseUrl("127.0.0.1:11434")).toBe("http://127.0.0.1:11434");
-  });
-
-  test("strips trailing slashes and surrounding whitespace", () => {
-    expect(normalizeBaseUrl("  http://localhost:11434/  ")).toBe("http://localhost:11434");
-  });
-
-  test("falls back to the hosted default when empty", () => {
-    expect(normalizeBaseUrl("   ")).toBe(DEFAULT_BASE_URL);
-  });
-});
-
-describe("resolveConfig", () => {
-  test("defaults to the hosted API with no key", () => {
-    expect(resolveConfig({})).toEqual({ baseUrl: DEFAULT_BASE_URL, customHost: false });
-  });
-
-  test("reads OLLAMA_API_KEY and trims it", () => {
-    expect(resolveConfig({ OLLAMA_API_KEY: "  secret  " }).apiKey).toBe("secret");
-  });
-
-  test("reads OLLAMA_HOST and marks it custom", () => {
-    const config = resolveConfig({ OLLAMA_HOST: "127.0.0.1:11434" });
-    expect(config).toEqual({
-      baseUrl: "http://127.0.0.1:11434",
-      apiKey: undefined,
-      customHost: true,
-    });
-  });
-});
-
-describe("normalizeTargetUrl", () => {
-  test("accepts schemeless input the way the Ollama docs do", () => {
-    expect(normalizeTargetUrl("ollama.com")).toBe("https://ollama.com/");
-  });
-
-  test("preserves an explicit http scheme, including a port", () => {
-    expect(normalizeTargetUrl("http://localhost:8080/x")).toBe("http://localhost:8080/x");
-  });
-
-  test("preserves query strings", () => {
-    expect(normalizeTargetUrl("https://example.com/a?b=1")).toBe("https://example.com/a?b=1");
-  });
-
-  test("rejects an empty value", () => {
-    expect(() => normalizeTargetUrl("   ")).toThrow(/url must not be empty/);
-  });
-
-  test("rejects non-http schemes", () => {
-    expect(() => normalizeTargetUrl("file:///etc/passwd")).toThrow(/only http and https/);
-  });
-
-  test("rejects input that is not a URL at all", () => {
-    expect(() => normalizeTargetUrl("not a url")).toThrow(/is not a valid URL/);
-  });
-});
-
-describe("clampMaxResults", () => {
-  test("defaults when absent or non-finite", () => {
-    expect(clampMaxResults(undefined)).toBe(DEFAULT_MAX_RESULTS);
-    expect(clampMaxResults(Number.NaN)).toBe(DEFAULT_MAX_RESULTS);
-  });
-
-  test("clamps into the documented 1-10 range", () => {
-    expect(clampMaxResults(0)).toBe(1);
-    expect(clampMaxResults(3)).toBe(3);
-    expect(clampMaxResults(50)).toBe(10);
-    expect(clampMaxResults(7.9)).toBe(7);
-  });
-});
 
 describe("OllamaWebClient.webSearch", () => {
   test("posts the query to /api/web_search with the bearer token", async () => {

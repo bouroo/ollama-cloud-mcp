@@ -2,14 +2,10 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 
-import {
-  DEFAULT_MAX_RESULTS,
-  MAX_MAX_RESULTS,
-  OllamaWebError,
-  type OllamaWebClient,
-  type WebFetchResponse,
-  type WebSearchResponse,
-} from "./ollama.js";
+import { OllamaWebError } from "../domain/errors.js";
+import { DEFAULT_MAX_RESULTS, MAX_MAX_RESULTS } from "../domain/web.js";
+import type { WebFetchResponse, WebSearchResponse } from "../domain/web.js";
+import type { OllamaWebClient } from "./OllamaWebClient.js";
 
 export const SERVER_NAME = "ollama-cloud-mcp";
 
