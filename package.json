@@ -1,6 +1,6 @@
 {
   "name": "@bouroo/ollama-cloud-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server exposing Ollama's web_search and web_fetch capabilities over stdio.",
   "license": "MIT",
   "author": "Kawin Viriyaprasopsook <kawin.v@kkumail.com>",
